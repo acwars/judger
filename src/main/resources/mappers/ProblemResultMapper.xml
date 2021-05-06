@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.onlinejudge.judger.dao.ProblemResultMapper" >
+  <resultMap id="BaseResultMap" type="com.onlinejudge.judger.entity.ProblemResult" >
+    <constructor >
+      <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="problem_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="comp_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="comp_score" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="run_num" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="status" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="type" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="time" jdbcType="BIGINT" javaType="java.lang.Long" />
+      <arg column="memory" jdbcType="BIGINT" javaType="java.lang.Long" />
+      <arg column="error_msg" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="source_code" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, problem_id, comp_id, comp_score, run_num, status, type, time, memory, error_msg,
+    source_code, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from problem_result
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from problem_result
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyProperty="id" parameterType="com.onlinejudge.judger.entity.ProblemResult" >
+    insert into problem_result (id, user_id, problem_id,
+      comp_id, comp_score, run_num, status,
+      type, time, memory, error_msg,
+      source_code, create_time)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{problemId,jdbcType=INTEGER},
+      #{compId,jdbcType=INTEGER},#{compScore,jdbcType=INTEGER}, #{runNum,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER},
+      #{type,jdbcType=VARCHAR}, #{time,jdbcType=BIGINT}, #{memory,jdbcType=BIGINT}, #{errorMsg,jdbcType=VARCHAR},
+      #{sourceCode,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}}
+      )
+  </insert>
+  <insert id="insertSelective" keyProperty="id" parameterType="com.onlinejudge.judger.entity.ProblemResult" >
+    insert into problem_result
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="problemId != null" >
+        problem_id,
+      </if>
+      <if test="compId != null" >
+        comp_id,
+      </if>
+      <if test="compScore != null" >
+        comp_score,
+      </if>
+      <if test="runNum != null" >
+        run_num,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+      <if test="memory != null" >
+        memory,
+      </if>
+      <if test="errorMsg != null" >
+        error_msg,
+      </if>
+      <if test="sourceCode != null" >
+        source_code,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="problemId != null" >
+        #{problemId,jdbcType=INTEGER},
+      </if>
+      <if test="compId != null" >
+        #{compId,jdbcType=INTEGER},
+      </if>
+      <if test="compScore != null" >
+        #{compScore,jdbcType=INTEGER},
+      </if>
+      <if test="runNum != null" >
+        #{runNum,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=BIGINT},
+      </if>
+      <if test="memory != null" >
+        #{memory,jdbcType=BIGINT},
+      </if>
+      <if test="errorMsg != null" >
+        #{errorMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceCode != null" >
+        #{sourceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.onlinejudge.judger.entity.ProblemResult" >
+    update problem_result
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="problemId != null" >
+        problem_id = #{problemId,jdbcType=INTEGER},
+      </if>
+      <if test="compId != null" >
+        comp_id = #{compId,jdbcType=INTEGER},
+      </if>
+      <if test="compScore != null" >
+        comp_score = #{compScore,jdbcType=INTEGER},
+      </if>
+      <if test="runNum != null" >
+        run_num = #{runNum,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        time = #{time,jdbcType=BIGINT},
+      </if>
+      <if test="memory != null" >
+        memory = #{memory,jdbcType=BIGINT},
+      </if>
+      <if test="errorMsg != null" >
+        error_msg = #{errorMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceCode != null" >
+        source_code = #{sourceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.onlinejudge.judger.entity.ProblemResult" >
+    update problem_result
+    set user_id = #{userId,jdbcType=INTEGER},
+      problem_id = #{problemId,jdbcType=INTEGER},
+      comp_id = #{compId,jdbcType=INTEGER},
+      comp_score = #{compScore,jdbcType=INTEGER},
+      run_num = #{runNum,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      type = #{type,jdbcType=VARCHAR},
+      time = #{time,jdbcType=BIGINT},
+      memory = #{memory,jdbcType=BIGINT},
+      error_msg = #{errorMsg,jdbcType=VARCHAR},
+      source_code = #{sourceCode,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="listByUserIdProblemId" resultType="com.onlinejudge.judger.entity.ProblemResult" parameterType="map">
+    select <include refid="Base_Column_List"/> from problem_result
+    where user_id = #{userId} and problemId = #{problemId}
+  </select>
+
+
+  <select id="countByUserIdProblemIdStatus" resultType="java.lang.Integer" parameterType="map">
+  select count(id) from problem_result
+  where user_id = #{userId} and problemId = #{problemId} and status #{status}
+  </select>
+
+  <select id="getProblemResultByRunNum" resultType="com.onlinejudge.judger.entity.ProblemResult" parameterType="string">
+    select <include refid="Base_Column_List"/> from problem_result
+    where run_num = #{runNum}
+  </select>
+
+  <select id="getTotalScoreById" resultType="java.lang.Integer" parameterType="map">
+  select sum(score) from
+    (select max(comp_score) score from problem_result pr
+                where user_id = #{userId} and comp_id = #{compId} group by problem_id) as t;
+  </select>
+
+  <update id="updateProblemResultStatus" parameterType="int">
+    update problem_result
+    set status = #{status}
+    where id = #{problemResultId}
+  </update>
+
+  <update id="updateCompScoreById" parameterType="map">
+  update problem_result
+    set comp_score = #{compScore}
+    where id = #{problemResultId}
+  </update>
+
+</mapper>

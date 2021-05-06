@@ -1,0 +1,46 @@
+#==================== Tomcat Setting =====================#
+server:
+  servlet:
+    context-path: /
+  tomcat:
+    uri-encoding: UTF-8
+  port: 9999
+#==================== spring Setting =====================#
+spring:
+  datasource:
+    druid:
+      username: root
+      password: root
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/online_judge?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+      max-active: 50
+      min-idle: 10
+      initial-size: 10
+      max-wait: 10
+      default-auto-commit: true
+  http:
+    encoding:
+      charset: UTF-8
+mybatis:
+  config-location: classpath:mybatis.config.xml
+  mapper-locations: classpath:mappers/*.xml
+  type-aliases-package: com.onlinejudge.judger.entity
+
+#==================== logging Setting =====================#
+#logging:
+#  config: classpath:logback.xml
+
+#==================== project Setting =====================#
+file:
+  server:
+    dir: /home/acwars/cryn/file
+    testcase:
+      dir: ${file.server.dir}/testcase
+#====================rocketMQ Setting =====================#
+rocketmq:
+  nameserver: 127.0.0.1:9876
+  topic: sourcecode
+  consumer:
+    group: judgeConsumerGroup
+    max-thread: 20
+    min-thread: 10
