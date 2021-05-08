@@ -115,8 +115,8 @@ public class JudgeServiceImpl implements JudgeService {
 
         Problem problem = problemService.getProblemById(problemResult.getProblemId());
         //AC题目增加的点数
-        Integer ratingCount = problem.getLevel() * 10;
-        Integer goldCount = problem.getLevel();
+        Integer ratingCount = problem.getRating() * 10;
+        Integer goldCount = problem.getRating();
 
         try {
             //执行输入和输出

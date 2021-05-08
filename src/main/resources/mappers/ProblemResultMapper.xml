@@ -129,6 +129,46 @@
       </if>
     </trim>
   </insert>
+
+  <insert id="insert2RecommendsProblemsData" keyProperty="id" parameterType="com.onlinejudge.judger.entity.Recommend" >
+    insert into recommends_problems_data
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="problemId != null" >
+        problem_id,
+      </if>
+      <if test="problemRating != null" >
+        problem_rating,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="problemId != null" >
+        #{problemId,jdbcType=INTEGER},
+      </if>
+      <if test="problemRating != null" >
+        #{problemRating,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+
   <update id="updateByPrimaryKeySelective" parameterType="com.onlinejudge.judger.entity.ProblemResult" >
     update problem_result
     <set >

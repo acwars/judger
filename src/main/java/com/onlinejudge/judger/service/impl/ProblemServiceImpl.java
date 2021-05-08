@@ -46,8 +46,11 @@ public class ProblemServiceImpl implements ProblemService {
     @Override
     public ServerResponse insertProblemResult(ProblemResult result) {
         result.setCreateTime(new Date());
+        Problem problem = problemMapper.selectByPrimaryKey(result.getProblemId());
+        result.setProblemRating(problem.getRating());
         int effect = problemResultMapper.insertSelective(result);
-        return effect > 0 ? ServerResponse.success() : ServerResponse.fail();
+        int effect2 = problemResultMapper.insert2RecommendsProblemsData(result);
+        return (effect > 0 && effect2 > 0) ? ServerResponse.success() : ServerResponse.fail();
     }
 
     /**

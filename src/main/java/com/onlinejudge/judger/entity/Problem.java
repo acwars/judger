@@ -20,7 +20,7 @@ public class Problem implements Serializable {
 
     private String testcaseOutput;
 
-    private Integer level;
+    private Integer rating;
 
     private Integer submitCount;
 
@@ -48,7 +48,7 @@ public class Problem implements Serializable {
 
     private Date updateTime;
 
-    public Problem(Integer id, String name, String content, String htmlContent,String inputDesc, String outputDesc, String testcaseInput, String testcaseOutput, Integer level, Integer submitCount, Integer acCount, Integer tleCount, Integer peCount, Integer meCount, Integer reCount, Integer ceCount, Integer waCount, Long time, Long memory, Integer flag, Date createTime, Date updateTime) {
+    public Problem(Integer id, String name, String content, String htmlContent, String inputDesc, String outputDesc, String testcaseInput, String testcaseOutput, Integer rating, Integer submitCount, Integer acCount, Integer tleCount, Integer peCount, Integer meCount, Integer reCount, Integer ceCount, Integer waCount, Long time, Long memory, Integer flag, Date createTime, Date updateTime) {
         this.id = id;
         this.name = name;
         this.content = content;
@@ -57,7 +57,7 @@ public class Problem implements Serializable {
         this.outputDesc = outputDesc;
         this.testcaseInput = testcaseInput;
         this.testcaseOutput = testcaseOutput;
-        this.level = level;
+        this.rating = rating;
         this.submitCount = submitCount;
         this.acCount = acCount;
         this.tleCount = tleCount;
@@ -133,12 +133,12 @@ public class Problem implements Serializable {
         this.testcaseOutput = testcaseOutput == null ? null : testcaseOutput.trim();
     }
 
-    public Integer getLevel() {
-        return level;
+    public Integer getRating() {
+        return rating;
     }
 
-    public void setLevel(Integer level) {
-        this.level = level;
+    public void setRating(Integer rating) {
+        this.rating = rating;
     }
 
     public Integer getSubmitCount() {
@@ -264,7 +264,7 @@ public class Problem implements Serializable {
                 ", outputDesc='" + outputDesc + '\'' +
                 ", testcaseInput='" + testcaseInput + '\'' +
                 ", testcaseOutput='" + testcaseOutput + '\'' +
-                ", level=" + level +
+                ", rating=" + rating +
                 ", submitCount=" + submitCount +
                 ", acCount=" + acCount +
                 ", tleCount=" + tleCount +
