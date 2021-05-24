@@ -1,6 +1,6 @@
 package com.onlinejudge.judger.service.impl;
 
-import com.onlinejudge.judger.common.CmdConst;
+import com.onlinejudge.judger.common.ExecConst;
 import com.onlinejudge.judger.common.JudgeStatusEnum;
 import com.onlinejudge.judger.common.LanguageEnum;
 import com.onlinejudge.judger.entity.Problem;
@@ -34,7 +34,7 @@ public class JudgeServiceImpl implements JudgeService {
 
     @Value("${file.server.testcase.dir}")
     private String fileServerTestcaseDir;
-
+    // 执行进程
     private static Runtime runtime = Runtime.getRuntime();
 
     @Autowired
@@ -58,24 +58,33 @@ public class JudgeServiceImpl implements JudgeService {
 
     @Override
     public String compile(ProblemResult problemResult) {
+        // 题目测试点路径
         String problemDirPath = fileServerTestcaseDir + "/" + problemResult.getProblemId();
+        // 用户提交代码路径
         String userDirPath = problemDirPath + "/" + UUIDUtil.createByTime();
+        // 获取提交源代码语言
         LanguageEnum languageEnum = LanguageEnum.getEnumByType(problemResult.getType());
+        // 获取相关源代码后缀名
         String ext = languageEnum.getExt();
+        // 保存源代码
         FileUtil.saveFile(problemResult.getSourceCode(), userDirPath + "/Main." + ext);
 
-
+        // 如果是比赛题目
         if (problemResult.getCompId() != null) {
             //add  submitCount
             registerService.addSubmitCountByCompIdUserId(problemResult.getCompId(), problemResult.getUserId());
             competitionProblemService.addSubmitCountByCompIdProblemId(problemResult.getCompId(), problemResult.getProblemId());
         }
 
+        // 编译错误信息
         String compileErrorOutput = null;
 
+        // 如果是需要编译的语言
         if (languageEnum.isRequiredCompile()) {
             try {
-                Process process = runtime.exec(CmdConst.compileCmd(problemResult.getType(), userDirPath));
+                // 单独打开一条线程执行指定的命令
+                Process process = runtime.exec(ExecConst.compileExec(problemResult.getType(), userDirPath));
+                // process.getErrorSteam()获取子进程的错误流,
                 compileErrorOutput = StreamUtil.getOutPut(process.getErrorStream());
 
             } catch (IOException e) {
@@ -86,16 +95,21 @@ public class JudgeServiceImpl implements JudgeService {
             }
         }
 
+        // 如果编译成功
         if (compileErrorOutput == null || "".equals(compileErrorOutput)) {
             return userDirPath;
         } else {
             //update compile error
             compileErrorOutput = StringUtil.getLimitLengthByString(compileErrorOutput, 1000);
+            // 状态设置为编译错误
             problemResult.setStatus(JudgeStatusEnum.COMPILE_ERROR.getStatus());
+            // 获取编译错误信息
             problemResult.setErrorMsg(compileErrorOutput);
+            // 更新测评结果
             problemService.updateProblemResultById(problemResult);
 
             //add count
+            // 编译错误次数累计
             problemService.addProblemCountById(problemResult.getProblemId(), JudgeStatusEnum.COMPILE_ERROR);
             userService.addCount(problemResult.getUserId(), JudgeStatusEnum.COMPILE_ERROR);
             FileUtil.deleteFile(userDirPath);
@@ -109,42 +123,62 @@ public class JudgeServiceImpl implements JudgeService {
         //update 判题中
         problemService.updateProblemResultStatusById(problemResult.getId(), JudgeStatusEnum.JUDGING.getStatus());
 
+        // 题目测试点目录
         String problemDirPath = fileServerTestcaseDir + "/" + problemResult.getProblemId();
+        // 输入文件目录
         String inputFileDirPath = problemDirPath + "/input";
+        // 输出文件目录
         String outputFileDirPath = problemDirPath + "/output";
-
+        // 获取题目信息
         Problem problem = problemService.getProblemById(problemResult.getProblemId());
         //AC题目增加的点数
         Integer ratingCount = problem.getRating() * 10;
         Integer goldCount = problem.getRating();
 
         try {
-            //执行输入和输出
+            // 执行输入和输出
+            // 创建一个文件对象
             File inputFileDir = new File(inputFileDirPath);
+            // 获取该目录下所有文件和目录的绝对路径
             File[] inputFiles = inputFileDir.listFiles();
+            // 等待其他的线程都执行完任务，必要时可以对各个任务的执行结果进行汇总，然后主线程才继续往下执行。
             CountDownLatch countDownLatch = new CountDownLatch(inputFiles.length);
+            // 创建固定大小的线程池。每次提交一个任务就创建一个线程，直到线程达到线程池的最大大小。
+            // 线程池的大小一旦达到最大值就会保持不变，如果某个线程因为执行异常而结束，那么线程池会补充一个新线程。
             ExecutorService executorService = Executors.newFixedThreadPool(inputFiles.length);
-
+            //
             for (File inputFile : inputFiles) {
-                ProcessBuilder builder = CmdConst.executeCmd(problemResult.getType(), userDirPath);
+                // 获取运行脚本实例进程
+                ProcessBuilder builder = ExecConst.executeExec(problemResult.getType(), userDirPath);
+                // 启动子进程
                 Process process = builder.start();
+                //
                 TestcaseInputTask testcaseInputTask = new TestcaseInputTask(problem, inputFile,
                         outputFileDirPath, process, problemResult, countDownLatch);
+                // 执行任务
                 executorService.execute(testcaseInputTask);
             }
+
+            // 最后关闭线程池，但执行以前提交的任务，不接受新任务
             executorService.shutdown();
+            // 阻塞当前线程，直到所有测试点测试结束
             countDownLatch.await();
             //汇总统计
             long maxTime = -1;
             long maxMemory = -1;
             Integer status = null;
             Integer acCount = 0;
+            //
             List<TestcaseResult> testcaseResultList = new ArrayList<>();
+            //
             Set<Map.Entry<Integer, TestcaseResult>> entrySet = problemResult.getResultMap().entrySet();
+            //
             for (Map.Entry<Integer, TestcaseResult> entry : entrySet) {
+                //
                 Integer testcaseNum = entry.getKey();
+                //
                 TestcaseResult testcaseResult = entry.getValue();
-
+                //
                 if (testcaseResult.getMemory() != null && testcaseResult.getMemory() > maxMemory) {
                     maxMemory = testcaseResult.getMemory();
                 }
@@ -169,6 +203,7 @@ public class JudgeServiceImpl implements JudgeService {
                 if (JudgeStatusEnum.ACCEPTED.getStatus().equals(testcaseResult.getStatus())) {
                     acCount++;
                 }
+                //
                 testcaseResultList.add(testcaseResult);
             }
 

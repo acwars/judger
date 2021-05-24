@@ -52,7 +52,9 @@ public class TestcaseInputTask implements Runnable {
             problemResult.setResultMap(new ConcurrentSkipListMap<>());
         }
         Map<Integer, TestcaseResult> resultMap = problemResult.getResultMap();
+        // 获取输入文件名
         String inputFileName = inputFile.getName();
+        // 获取测试点数量
         Integer testCaseNum = Integer.parseInt(inputFileName.substring(0, inputFileName.lastIndexOf(".")));
 
         //输入测试样例
@@ -67,6 +69,7 @@ public class TestcaseInputTask implements Runnable {
 
         //计算输出时间和内存任务
         FutureTask<TestcaseResult> task = new FutureTask<>(new TestcaseOutputTask(process, testcaseResult));
+        // 启动线程
         new Thread(task).start();
 
         try {
@@ -115,14 +118,17 @@ public class TestcaseInputTask implements Runnable {
                 testcaseResult.setStatus(JudgeStatusEnum.MEMORY_LIMIT_EXCEEDED.getStatus());
                 return;
             }
+
             String answerOutPut = StreamUtil.getOutPut(new FileInputStream(outputFile));
             String userOutput = testcaseResult.getUserOutput();
 
-            //去除最右端多余字符
+            // 去除最右端多余字符
             answerOutPut = StringUtil.rTrim(answerOutPut);
             userOutput = StringUtil.rTrim(userOutput);
 
+            // 格式化输出答案
             String formatAnswerOutput = formatString(answerOutPut);
+            // 格式化用户输出答案
             String formatUserOutput = formatString(userOutput);
 
             if (answerOutPut.equals(userOutput)) {

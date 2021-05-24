@@ -1,6 +1,6 @@
 package com.onlinejudge.judger.common;
 
-public class CmdConst {
+public class ExecConst {
 
     /**
      * 获取编译脚本命令
@@ -8,7 +8,7 @@ public class CmdConst {
      * @param dir
      * @return
      */
-    public static String compileCmd(String type, String dir) {
+    public static String compileExec(String type, String dir) {
 
         if (LanguageEnum.JAVA8.getType().equals(type)) {
             if (dir != null && !"".equals(dir)) {
@@ -40,7 +40,7 @@ public class CmdConst {
      * @param dir
      * @return
      */
-    public static ProcessBuilder executeCmd(String type, String dir) {
+    public static ProcessBuilder executeExec(String type, String dir) {
         ProcessBuilder builder = null;
 
         if (LanguageEnum.JAVA8.getType().equals(type)) {

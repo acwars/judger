@@ -25,18 +25,22 @@ public class TestcaseOutputTask implements Callable<TestcaseResult> {
 
     @Override
     public TestcaseResult call() throws Exception {
+        // FutureTask可以执行异步计算，可以查看异步程序是否执行完毕，并且可以开始和取消程序，并取得程序最终的执行结果。
         FutureTask<Long> futureTask = new FutureTask<>(new TestcaseUsedMemoryTask(process));
         new Thread(futureTask).start();
+        // 来统计一个方法执行了多长时间
         Instant startTime = Instant.now();
-        //阻塞
+        // 阻塞
         String output = StreamUtil.getOutPut(process.getInputStream());
         Instant endTime = Instant.now();
 
+        // 来统计一个方法执行了多长时间
         testcaseResult.setTime(Duration.between(startTime, endTime).toMillis());
         testcaseResult.setUserOutput(output);
 
-        //等待进程执行结束 0代表正常退出
+        // 等待进程执行结束 0代表正常退出
         int exitValue = process.waitFor();
+        // 获取代码使用内存
         Long usedMemory = futureTask.get();
         testcaseResult.setMemory(usedMemory);
         if (exitValue != 0 && testcaseResult.getStatus() == null) {

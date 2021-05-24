@@ -34,8 +34,10 @@ public class FileUtil {
     public static boolean deleteFile(String path) {
         File file = new File(path);
         boolean result = false;
+        // 判断File对象是不是目录
         if (file.isDirectory()) {
             File[] files = file.listFiles();
+            //  遍历数组,显示目录中文件列表
             for (File subFile : files) {
                 if (subFile.isDirectory()) {
                     deleteFile(subFile.getPath());
